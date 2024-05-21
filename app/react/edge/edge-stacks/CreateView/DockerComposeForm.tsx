@@ -82,7 +82,7 @@ export function DockerComposeForm({
           id="stack-creation-editor"
           value={values.fileContent}
           onChange={(value) => handleChange({ fileContent: value })}
-          yaml
+          type="yaml"
           placeholder="Define or paste the content of your docker compose file here"
           error={errors?.fileContent}
           readonly={method === edgeStackTemplate.value && !!template?.GitConfig}

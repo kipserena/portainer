@@ -222,9 +222,7 @@ export const ngModule = angular
     r2a(CodeEditor, [
       'id',
       'placeholder',
-      'yaml',
-      'dockerFile',
-      'shell',
+      'type',
       'readonly',
       'onChange',
       'value',

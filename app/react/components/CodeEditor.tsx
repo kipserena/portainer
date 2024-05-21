@@ -18,9 +18,7 @@ import { StackVersionSelector } from './StackVersionSelector';
 interface Props extends AutomationTestingProps {
   id: string;
   placeholder?: string;
-  yaml?: boolean;
-  dockerFile?: boolean;
-  shell?: boolean;
+  type?: 'yaml' | 'shell' | 'dockerfile';
   readonly?: boolean;
   onChange: (value: string) => void;
   value: string;
@@ -71,26 +69,24 @@ export function CodeEditor({
   versions,
   onVersionChange,
   height = '500px',
-  yaml: isYaml,
-  dockerFile: isDockerFile,
-  shell: isShell,
+  type,
   'data-cy': dataCy,
 }: Props) {
   const [isRollback, setIsRollback] = useState(false);
 
   const extensions = useMemo(() => {
     const extensions = [];
-    if (isYaml) {
+    if (type === 'yaml') {
       extensions.push(yamlLanguage);
     }
-    if (isDockerFile) {
+    if (type === 'dockerfile') {
       extensions.push(dockerFileLanguage);
     }
-    if (isShell) {
+    if (type === 'shell') {
       extensions.push(shellLanguage);
     }
     return extensions;
-  }, [isYaml, isDockerFile, isShell]);
+  }, [type]);
 
   function handleVersionChange(version: number) {
     if (versions && versions.length > 1) {
