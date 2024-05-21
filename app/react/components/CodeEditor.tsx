@@ -15,10 +15,11 @@ import styles from './CodeEditor.module.css';
 import { TextTip } from './Tip/TextTip';
 import { StackVersionSelector } from './StackVersionSelector';
 
+type Type = 'yaml' | 'shell' | 'dockerfile';
 interface Props extends AutomationTestingProps {
   id: string;
   placeholder?: string;
-  type?: 'yaml' | 'shell' | 'dockerfile';
+  type?: Type;
   readonly?: boolean;
   onChange: (value: string) => void;
   value: string;
@@ -60,6 +61,12 @@ const dockerFileLanguage = new LanguageSupport(
 );
 const shellLanguage = new LanguageSupport(StreamLanguage.define(shell));
 
+const docTypeExtensionMap: Record<Type, LanguageSupport> = {
+  yaml: yamlLanguage,
+  dockerfile: dockerFileLanguage,
+  shell: shellLanguage,
+};
+
 export function CodeEditor({
   id,
   onChange,
@@ -76,14 +83,8 @@ export function CodeEditor({
 
   const extensions = useMemo(() => {
     const extensions = [];
-    if (type === 'yaml') {
-      extensions.push(yamlLanguage);
-    }
-    if (type === 'dockerfile') {
-      extensions.push(dockerFileLanguage);
-    }
-    if (type === 'shell') {
-      extensions.push(shellLanguage);
+    if (type && docTypeExtensionMap[type]) {
+      extensions.push(docTypeExtensionMap[type]);
     }
     return extensions;
   }, [type]);
