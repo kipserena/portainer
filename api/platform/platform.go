@@ -32,27 +32,27 @@ const (
 // or KUBERNETES_SERVICE_HOST environment variable to determine if
 // the container is running on Podman or inside the Kubernetes platform.
 // Defaults to Docker otherwise.
-func DetermineContainerPlatform() (ContainerPlatform, error) {
+func DetermineContainerPlatform() ContainerPlatform {
 	podmanModeEnvVar := os.Getenv(PodmanMode)
 	if podmanModeEnvVar == "1" {
-		return PlatformPodman, nil
+		return PlatformPodman
 	}
 
 	serviceHostKubernetesEnvVar := os.Getenv(KubernetesServiceHost)
 	if serviceHostKubernetesEnvVar != "" {
-		return PlatformKubernetes, nil
+		return PlatformKubernetes
 	}
 
 	nomadJobName := os.Getenv(NomadJobName)
 	if nomadJobName != "" {
-		return PlatformNomad, nil
+		return PlatformNomad
 	}
 
 	if !isRunningInContainer() {
-		return "", nil
+		return ""
 	}
 
-	return PlatformDocker, nil
+	return PlatformDocker
 }
 
 // isRunningInContainer returns true if the process is running inside a container
