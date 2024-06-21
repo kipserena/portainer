@@ -12,21 +12,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const (
-	// mustacheUpgradeDockerTemplateFile represents the name of the template file for the docker upgrade
-	mustacheUpgradeDockerTemplateFile = "upgrade-docker.yml.mustache"
-
-	// portainerImagePrefixEnvVar represents the name of the environment variable used to define the image prefix for portainer-updater
-	// useful if there's a need to test PR images
-	portainerImagePrefixEnvVar = "UPGRADE_PORTAINER_IMAGE_PREFIX"
-	// skipPullImageEnvVar represents the name of the environment variable used to define if the image pull should be skipped
-	// useful if there's a need to test local images
-	skipPullImageEnvVar = "UPGRADE_SKIP_PULL_PORTAINER_IMAGE"
-	// updaterImageEnvVar represents the name of the environment variable used to define the updater image
-	// useful if there's a need to test a different updater
-	updaterImageEnvVar = "UPGRADE_UPDATER_IMAGE"
-)
-
 type Service interface {
 	Upgrade(platform plf.ContainerPlatform, environment *portainer.Endpoint, licenseKey string) error
 }
@@ -39,7 +24,8 @@ type service struct {
 
 	isUpdating bool
 
-	assetsPath string
+	assetsPath    string
+	stackDeployer deployments.StackDeployer
 }
 
 func NewService(
@@ -58,6 +44,7 @@ func NewService(
 		dockerClientFactory:       dockerClientFactory,
 		dockerComposeStackManager: dockerComposeStackManager,
 		fileService:               fileService,
+		stackDeployer:             stackDeployer,
 	}, nil
 }
 

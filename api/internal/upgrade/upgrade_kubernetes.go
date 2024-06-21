@@ -3,7 +3,6 @@ package upgrade
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/pkg/errors"
@@ -30,17 +29,8 @@ func (service *service) upgradeKubernetes(environment *portainer.Endpoint, licen
 
 	jobsCli := kubeCLI.BatchV1().Jobs(namespace)
 
-	updaterImage := os.Getenv(updaterImageEnvVar)
-	if updaterImage == "" {
-		updaterImage = "portainer/portainer-updater:latest"
-	}
-
-	portainerImagePrefix := os.Getenv(portainerImagePrefixEnvVar)
-	if portainerImagePrefix == "" {
-		portainerImagePrefix = "portainer/portainer-ee"
-	}
-
-	image := fmt.Sprintf("%s:%s", portainerImagePrefix, version)
+	updaterImage := getUpdaterImageName()
+	image := getEEImageName(version)
 
 	if err := service.checkImageForKubernetes(ctx, kubeCLI, namespace, image); err != nil {
 		return err

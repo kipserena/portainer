@@ -24,6 +24,10 @@ func (manager *composeStackManager) Up(ctx context.Context, stack *portainer.Sta
 	return nil
 }
 
+func (manager *composeStackManager) Run(ctx context.Context, stack *portainer.Stack, endpoint *portainer.Endpoint, serviceName string, options portainer.ComposeRunOptions) error {
+	return nil
+}
+
 func (manager *composeStackManager) Down(ctx context.Context, stack *portainer.Stack, endpoint *portainer.Endpoint) error {
 	return nil
 }

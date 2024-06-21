@@ -13,6 +13,8 @@ import (
 	"github.com/portainer/portainer/api/http/proxy/factory"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 	"github.com/portainer/portainer/pkg/libstack"
+	"github.com/portainer/portainer/pkg/libstack/compose"
+	"github.com/rs/zerolog/log"
 
 	"github.com/pkg/errors"
 )
@@ -24,7 +26,11 @@ type ComposeStackManager struct {
 }
 
 // NewComposeStackManager returns a docker-compose wrapper if corresponding binary present, otherwise nil
-func NewComposeStackManager(deployer libstack.Deployer, proxyManager *proxy.Manager) (*ComposeStackManager, error) {
+func NewComposeStackManager(binaryPath string, configPath string, proxyManager *proxy.Manager) (*ComposeStackManager, error) {
+	deployer, err := compose.NewComposeDeployer(binaryPath, configPath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed initializing compose deployer")
+	}
 
 	return &ComposeStackManager{
 		deployer:     deployer,

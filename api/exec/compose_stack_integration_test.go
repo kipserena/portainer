@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
-	"github.com/portainer/portainer/pkg/libstack/compose"
 	"github.com/portainer/portainer/pkg/testhelpers"
 
 	"github.com/rs/zerolog/log"
@@ -48,12 +47,7 @@ func Test_UpAndDown(t *testing.T) {
 
 	stack, endpoint := setup(t)
 
-	deployer, err := compose.NewComposeDeployer("", "")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	w, err := NewComposeStackManager(deployer, nil)
+	w, err := NewComposeStackManager("", "", nil)
 	if err != nil {
 		t.Fatalf("Failed creating manager: %s", err)
 	}

@@ -49,8 +49,6 @@ import (
 	"github.com/portainer/portainer/api/stacks/deployments"
 	"github.com/portainer/portainer/pkg/featureflags"
 	"github.com/portainer/portainer/pkg/libhelm"
-	"github.com/portainer/portainer/pkg/libstack"
-	"github.com/portainer/portainer/pkg/libstack/compose"
 
 	"github.com/gofrs/uuid"
 	"github.com/rs/zerolog/log"
@@ -169,8 +167,11 @@ func checkDBSchemaServerVersionMatch(dbStore dataservices.DataStore, serverVersi
 	return v.SchemaVersion == serverVersion && v.Edition == serverEdition
 }
 
-func initComposeStackManager(composeDeployer libstack.Deployer, proxyManager *proxy.Manager) portainer.ComposeStackManager {
-	composeWrapper, err := exec.NewComposeStackManager(composeDeployer, proxyManager)
+func initComposeStackManager(
+	assetsPath string,
+	configPath string,
+	proxyManager *proxy.Manager) portainer.ComposeStackManager {
+	composeWrapper, err := exec.NewComposeStackManager(assetsPath, configPath, proxyManager)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed creating compose manager")
 	}
@@ -470,12 +471,7 @@ func buildServer(flags *portainer.CLIFlags) portainer.Server {
 
 	dockerConfigPath := fileService.GetDockerConfigPath()
 
-	composeDeployer, err := compose.NewComposeDeployer(*flags.Assets, dockerConfigPath)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed initializing compose deployer")
-	}
-
-	composeStackManager := initComposeStackManager(composeDeployer, proxyManager)
+	composeStackManager := initComposeStackManager(*flags.Assets, dockerConfigPath, proxyManager)
 
 	swarmStackManager, err := initSwarmStackManager(*flags.Assets, dockerConfigPath, digitalSignatureService, fileService, reverseTunnelService, dataStore)
 	if err != nil {
